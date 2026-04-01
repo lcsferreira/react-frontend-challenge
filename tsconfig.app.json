@@ -9,7 +9,10 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "ui/*": ["./src/shared/ui/*"],
+      "lib/*": ["./src/shared/lib/*"],
+      "hooks/*": ["./src/shared/hooks/*"]
     },
 
     /* Bundler mode */

@@ -2,17 +2,24 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { LoginForm } from './LoginForm'
 import { useAuthStore } from '../model/store'
+import { authApi } from '../api/auth'
 
-// Mocking TanStack Router's useNavigate
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => vi.fn(),
 }))
 
-// Mocking Sonner
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
     error: vi.fn(),
+  },
+}))
+
+vi.mock('../api/auth', () => ({
+  authApi: {
+    getRequestToken: vi.fn(),
+    validateWithLogin: vi.fn(),
+    createSession: vi.fn(),
   },
 }))
 
@@ -47,19 +54,33 @@ describe('LoginForm', () => {
     const loginMock = vi.fn()
     useAuthStore.setState({ login: loginMock })
 
+    vi.mocked(authApi.getRequestToken).mockResolvedValue({ 
+      success: true, 
+      expires_at: '2026-04-01T20:00:00Z', 
+      request_token: 'valid_token' 
+    })
+    vi.mocked(authApi.validateWithLogin).mockResolvedValue({ 
+      success: true, 
+      expires_at: '2026-04-01T20:00:00Z', 
+      request_token: 'valid_token' 
+    })
+    vi.mocked(authApi.createSession).mockResolvedValue({ 
+      success: true, 
+      session_id: 'session123' 
+    })
+
     render(<LoginForm />)
 
     const usernameInput = screen.getByLabelText(/usuário/i)
-    fireEvent.input(usernameInput, { target: { value: 'user123' } })
+    fireEvent.change(usernameInput, { target: { value: 'user123' } })
     
     const passwordInput = screen.getByLabelText(/senha/i)
-    fireEvent.input(passwordInput, { target: { value: 'password123' } })
+    fireEvent.change(passwordInput, { target: { value: 'password123' } })
 
     fireEvent.click(screen.getByRole('button', { name: /entrar/i }))
 
     await waitFor(() => {
-      // login(username, sessionId)
-      expect(loginMock).toHaveBeenCalledWith('user123', expect.any(String))
+      expect(loginMock).toHaveBeenCalledWith('user123', 'session123')
     }, { timeout: 2000 })
   })
 

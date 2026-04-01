@@ -14,6 +14,8 @@ export interface Movie {
   adult: boolean
   video: boolean
   original_language: string
+  videos?: VideosResponse
+  credits?: CreditsResponse
 }
 
 export interface Genre {
@@ -21,9 +23,36 @@ export interface Genre {
   name: string
 }
 
+export interface Cast {
+  id: number
+  name: string
+  character: string
+  profile_path: string | null
+  order: number
+}
+
+export interface Video {
+  id: string
+  key: string
+  name: string
+  site: string
+  type: string
+  official: boolean
+}
+
 export interface TMDBResponse<T> {
   page: number
   results: T[]
   total_pages: number
   total_results: number
+}
+
+export interface VideosResponse {
+  id: number
+  results: Video[]
+}
+
+export interface CreditsResponse {
+  id: number
+  cast: Cast[]
 }

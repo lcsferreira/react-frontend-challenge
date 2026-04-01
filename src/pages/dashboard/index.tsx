@@ -2,9 +2,11 @@ import { useState } from "react"
 import { useMovies, MovieGrid, DiscoveryFilters } from "@/features/discovery"
 import { useDebounce } from "@/shared/hooks/useDebounce"
 import { Pagination } from "@/shared/ui/pagination"
+import { useRouter } from "@tanstack/react-router"
 import { Compass, TrendingUp, Search as SearchIcon } from "lucide-react"
 
 export function DashboardPage() {
+  const { navigate } = useRouter()
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState({
     query: "",
@@ -30,6 +32,10 @@ export function DashboardPage() {
   const handleClearFilters = () => {
     setFilters({ query: "", genre: "", year: "", minRating: 0 })
     setPage(1)
+  }
+
+  const handleMovieClick = (id: number) => {
+    navigate({ to: "/movie/$movieId", params: { movieId: id.toString() } })
   }
 
   const isSearching = debouncedQuery.length > 0
@@ -72,6 +78,7 @@ export function DashboardPage() {
         <MovieGrid 
           movies={data?.results} 
           isLoading={isLoading} 
+          onMovieClick={handleMovieClick}
         />
 
         {data && data.total_pages > 1 && (

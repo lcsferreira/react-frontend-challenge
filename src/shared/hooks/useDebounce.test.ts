@@ -1,33 +1,44 @@
-import { renderHook, act } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
-import { useDebounce } from './useDebounce'
+import { renderHook, act } from "@testing-library/react"
+import { useDebounce } from "./useDebounce"
+import { describe, it, expect, vi } from "vitest"
 
-describe('useDebounce', () => {
+describe("useDebounce", () => {
   vi.useFakeTimers()
 
-  it('should return initial value immediately', () => {
-    const { result } = renderHook(() => useDebounce('test', 500))
-    expect(result.current).toBe('test')
+  it("should return initial value", () => {
+    const { result } = renderHook(() => useDebounce("test", 500))
+    expect(result.current).toBe("test")
   })
 
-  it('should debounce value changes', () => {
+  it("should update value after delay", () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
-        initialProps: { value: 'initial', delay: 500 },
+        initialProps: { value: "test", delay: 500 },
       }
     )
 
-    expect(result.current).toBe('initial')
+    // Update the value
+    rerender({ value: "updated", delay: 500 })
 
-    rerender({ value: 'updated', delay: 500 })
+    // Should still be old value immediately after update
+    expect(result.current).toBe("test")
 
-    expect(result.current).toBe('initial')
-
+    // Advance time by 500ms
     act(() => {
       vi.advanceTimersByTime(500)
     })
 
-    expect(result.current).toBe('updated')
+    // Now should be updated
+    expect(result.current).toBe("updated")
+  })
+
+  it("should clear timeout on unmount", () => {
+    const spy = vi.spyOn(global, "clearTimeout")
+    const { unmount } = renderHook(() => useDebounce("test", 500))
+    
+    unmount()
+    expect(spy).toHaveBeenCalled()
+    spy.mockRestore()
   })
 })

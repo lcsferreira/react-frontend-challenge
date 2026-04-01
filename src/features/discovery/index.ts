@@ -1,3 +1,5 @@
 export * from "./api/tmdb"
 export * from "./hooks/useMovies"
 export * from "./hooks/useGenres"
+export * from "./ui/MovieGrid"
+export * from "./ui/DiscoveryFilters"

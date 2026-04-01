@@ -1,9 +1,11 @@
-import { Star, Calendar } from "lucide-react"
+import { Star, Calendar, Bookmark, BookmarkCheck } from "lucide-react"
 import type { Movie } from "../model/types"
 import { TMDB_IMAGE_BASE_URL } from "@/shared/lib/constants"
 import { Card, CardContent, CardFooter, CardHeader } from "@/shared/ui/card"
 import { formatDate, formatRating } from "../lib/formatters"
 import { cn } from "@/shared/lib/utils"
+import { useWatchlistStore } from "@/features/watchlist/model/store"
+import { Button } from "@/shared/ui/button"
 
 interface MovieCardProps {
   movie: Movie
@@ -12,6 +14,18 @@ interface MovieCardProps {
 }
 
 export const MovieCard = ({ movie, className, onClick }: MovieCardProps) => {
+  const { isInWatchlist, addMovie, removeMovie } = useWatchlistStore()
+  const isSelected = isInWatchlist(movie.id)
+
+  const handleWatchlistToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (isSelected) {
+      removeMovie(movie.id)
+    } else {
+      addMovie(movie)
+    }
+  }
+
   const posterUrl = movie.poster_path
     ? `${TMDB_IMAGE_BASE_URL}w500${movie.poster_path}`
     : "https://via.placeholder.com/500x750?text=Sem+Poster"
@@ -34,10 +48,28 @@ export const MovieCard = ({ movie, className, onClick }: MovieCardProps) => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
           
-          <div className="absolute right-2 top-2 rounded-full bg-secondary/80 px-2 py-1 text-xs font-bold text-secondary-foreground backdrop-blur-md shadow-sm border border-secondary/50 flex items-center gap-1">
-            <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-            {formatRating(movie.vote_average)}
+          <div className="absolute right-2 top-2 flex flex-col gap-2 scale-90 group-hover:scale-100 transition-transform">
+            <div className="rounded-full bg-secondary/80 px-2 py-1 text-xs font-bold text-secondary-foreground backdrop-blur-md shadow-sm border border-secondary/50 flex items-center gap-1">
+              <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+              {formatRating(movie.vote_average)}
+            </div>
           </div>
+
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={handleWatchlistToggle}
+            className={cn(
+              "absolute left-2 top-2 h-8 w-8 rounded-full border border-primary/20 transition-all scale-0 group-hover:scale-100",
+              isSelected && "bg-primary text-primary-foreground scale-100"
+            )}
+          >
+            {isSelected ? (
+              <BookmarkCheck className="h-4 w-4" />
+            ) : (
+              <Bookmark className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       </CardHeader>
 

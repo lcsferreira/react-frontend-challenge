@@ -13,29 +13,65 @@ const rootRoute = createRootRoute({
   component: RootLayout,
 })
 
+import { useAuthStore } from '@/features/auth/model/store'
+import { redirect } from '@tanstack/react-router'
+
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: DashboardPage,
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState()
+    if (!isAuthenticated) {
+      throw redirect({
+        to: '/login',
+      })
+    }
+  },
 })
 
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/login',
   component: LoginPage,
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState()
+    if (isAuthenticated) {
+      throw redirect({
+        to: '/',
+      })
+    }
+  },
 })
 
 const watchlistRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/watchlist',
   component: WatchlistPage,
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState()
+    if (!isAuthenticated) {
+      throw redirect({
+        to: '/login',
+      })
+    }
+  },
 })
 
 const movieDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/movie/$movieId',
   component: MovieDetailPage,
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState()
+    if (!isAuthenticated) {
+      throw redirect({
+        to: '/login',
+      })
+    }
+  },
 })
+
 
 const routeTree = rootRoute.addChildren([
   indexRoute,

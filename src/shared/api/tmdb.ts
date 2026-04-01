@@ -13,7 +13,10 @@ interface FetchOptions extends RequestInit {
 export async function tmdbFetch<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
   const { params, ...init } = options
   
-  const url = new URL(`${TMDB_BASE_URL}${endpoint}`)
+  const baseUrl = TMDB_BASE_URL?.endsWith('/') ? TMDB_BASE_URL.slice(0, -1) : TMDB_BASE_URL
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint
+  
+  const url = new URL(`${baseUrl}/${cleanEndpoint}`)
   
   url.searchParams.append('api_key', TMDB_API_KEY || '')
   
@@ -27,8 +30,12 @@ export async function tmdbFetch<T>(endpoint: string, options: FetchOptions = {})
     ...init,
     headers: {
       'Content-Type': 'application/json',
+      ...(import.meta.env.VITE_API_READ_ACCESS_TOKEN ? {
+        Authorization: `Bearer ${import.meta.env.VITE_API_READ_ACCESS_TOKEN}`
+      } : {}),
       ...init.headers,
     },
+
   })
 
   if (!response.ok) {

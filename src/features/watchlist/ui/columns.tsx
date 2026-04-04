@@ -12,20 +12,52 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu"
 
+import { TMDB_IMAGE_BASE_URL } from "@/shared/lib/constants"
+
+import { useGenreStore } from "@/entities/movie"
+
 export const getColumns = (onRemove: (id: number) => void, onDetails: (id: number) => void): ColumnDef<Movie>[] => [
   {
     accessorKey: "title",
-    header: "Título",
-    cell: ({ row }) => <span className="font-bold">{row.original.title}</span>,
+    header: "Filme",
+    cell: ({ row }) => {
+      const movie = row.original
+      const posterUrl = movie.poster_path
+        ? `${TMDB_IMAGE_BASE_URL}w92${movie.poster_path}`
+        : "https://via.placeholder.com/92x138?text=Sem+Poster"
+
+      return (
+        <div className="flex items-center gap-4">
+          <div className="h-20 w-14 flex-shrink-0 overflow-hidden rounded-lg border border-muted/20 bg-muted/50 shadow-sm transition-transform group-hover:scale-105">
+            <img 
+              src={posterUrl} 
+              alt={movie.title} 
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <span className="font-black tracking-tight text-foreground group-hover:text-primary transition-colors max-w-[200px] truncate md:max-w-none">
+            {movie.title}
+          </span>
+        </div>
+      )
+    },
   },
   {
     accessorKey: "genres",
     header: "Gênero",
-    cell: ({ row }) => (
-      <span className="text-xs text-muted-foreground bg-secondary/30 px-2 py-1 rounded-md">
-        {formatGenres(row.original.genres)}
-      </span>
-    ),
+    cell: ({ row }) => {
+      const movie = row.original
+      const getGenreNames = useGenreStore.getState().getGenreNames
+      const genreText = movie.genres && movie.genres.length > 0 
+        ? formatGenres(movie.genres) 
+        : getGenreNames(movie.genre_ids)
+
+      return (
+        <span className="text-xs text-muted-foreground bg-secondary/30 px-2 py-1 rounded-md">
+          {genreText}
+        </span>
+      )
+    },
   },
   {
     accessorKey: "release_date",

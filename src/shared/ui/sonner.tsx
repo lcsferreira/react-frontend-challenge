@@ -1,6 +1,6 @@
 "use client"
 
-import { useThemeStore } from "@/features/theme/model/store"
+import { useThemeStore } from "@/shared/model/themeStore"
 import { Toaster as Sonner } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>

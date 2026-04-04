@@ -9,7 +9,9 @@ import {
 import { getColumns } from "./columns"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table"
 import { useWatchlistStore } from "../model/store"
-import { Search, ListFilter } from "lucide-react"
+import { ListFilter } from "lucide-react"
+import { EmptyState } from "@/shared/ui/feedback-states"
+import { useRouter } from "@tanstack/react-router"
 
 interface WatchlistTableProps {
   onMovieClick: (id: number) => void
@@ -19,6 +21,7 @@ export const WatchlistTable = ({ onMovieClick }: WatchlistTableProps) => {
   const { movies, removeMovie } = useWatchlistStore()
   const [sorting, setSorting] = useState<SortingState>([])
   const [isHydrated, setIsHydrated] = useState(false)
+  const { navigate } = useRouter()
 
   useEffect(() => {
     setIsHydrated(true)
@@ -41,15 +44,12 @@ export const WatchlistTable = ({ onMovieClick }: WatchlistTableProps) => {
 
   if (movies.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 text-center bg-card/10 backdrop-blur-md rounded-2xl border border-muted/20 animate-in fade-in zoom-in duration-500">
-        <div className="bg-primary/10 p-5 rounded-full mb-6">
-           <Search className="h-10 w-10 text-primary opacity-50" />
-        </div>
-        <h3 className="text-2xl font-black mb-2 tracking-tight">Sua watchlist está vazia</h3>
-        <p className="text-muted-foreground max-w-[400px]">
-          Comece a explorar filmes no <span className="text-primary font-bold">Dashboard</span> e adicione seus favoritos aqui.
-        </p>
-      </div>
+      <EmptyState 
+        title="Sua watchlist está vazia"
+        description="Comece a explorar filmes no Dashboard e adicione seus favoritos aqui."
+        actionLabel="Explorar Filmes"
+        onAction={() => navigate({ to: "/" })}
+      />
     )
   }
 

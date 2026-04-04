@@ -13,7 +13,7 @@ export const MovieVideos = ({ videos }: MovieVideosProps) => {
   if (!trailer) return null
 
   return (
-    <div className="space-y-6">
+    <div id="trailer" className="space-y-6">
       <h2 className="text-2xl font-black uppercase tracking-widest text-foreground/80 border-l-4 border-primary pl-4">
         Trailer Oficial
       </h2>

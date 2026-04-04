@@ -6,6 +6,7 @@ import { formatDate, formatRating } from "../lib/formatters"
 import { cn } from "@/shared/lib/utils"
 import { useWatchlistStore } from "@/features/watchlist/model/store"
 import { Button } from "@/shared/ui/button"
+import { toast } from "sonner"
 
 interface MovieCardProps {
   movie: Movie
@@ -21,8 +22,10 @@ export const MovieCard = ({ movie, className, onClick }: MovieCardProps) => {
     e.stopPropagation()
     if (isSelected) {
       removeMovie(movie.id)
+      toast.success(`${movie.title} removido da lista`)
     } else {
       addMovie(movie)
+      toast.success(`${movie.title} adicionado à lista`)
     }
   }
 

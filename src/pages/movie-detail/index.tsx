@@ -2,12 +2,13 @@ import { useParams, useRouter } from "@tanstack/react-router"
 import { useMovieDetail, MovieHero, MovieCast, MovieVideos, MovieDetailSkeleton } from "@/features/movie-detail"
 import { useWatchlistStore } from "@/features/watchlist"
 import { Button } from "@/shared/ui/button"
-import { ArrowLeft, AlertCircle } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
+import { ErrorState } from "@/shared/ui/feedback-states"
 
 export function MovieDetailPage() {
   const { movieId } = useParams({ from: "/movie/$movieId" })
   const { navigate } = useRouter()
-  const { data: movie, isLoading, isError, error } = useMovieDetail(movieId)
+  const { data: movie, isLoading, isError, error, refetch } = useMovieDetail(movieId)
   
   const { isInWatchlist, addMovie, removeMovie } = useWatchlistStore()
   const isSelected = movie ? isInWatchlist(movie.id) : false
@@ -21,28 +22,23 @@ export function MovieDetailPage() {
     }
   }
 
+  const handlePlayTrailer = () => {
+    const element = document.getElementById("trailer")
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" })
+    }
+  }
+
   if (isLoading) return <MovieDetailSkeleton />
 
   if (isError || !movie) {
     return (
-      <div className="container flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center animate-in fade-in zoom-in duration-500">
-        <div className="bg-destructive/10 p-6 rounded-full border-4 border-destructive/20 shadow-xl shadow-destructive/5 animate-bounce">
-          <AlertCircle className="h-12 w-12 text-destructive" />
-        </div>
-        <div className="space-y-2">
-          <h2 className="text-3xl font-black tracking-tight">Ops! Algo deu errado.</h2>
-          <p className="text-muted-foreground max-w-md mx-auto text-lg leading-relaxed">
-            {error instanceof Error ? error.message : "Não conseguimos carregar os detalhes deste filme no momento."}
-          </p>
-        </div>
-        <Button 
-          variant="outline" 
-          size="lg" 
-          onClick={() => navigate({ to: "/" })} 
-          className="rounded-full px-8 font-bold border-2"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar ao Dashboard
-        </Button>
+      <div className="container min-h-[60vh] flex items-center justify-center">
+        <ErrorState 
+          description={error instanceof Error ? error.message : "Não conseguimos carregar os detalhes deste filme."}
+          onRetry={() => refetch()}
+          className="w-full"
+        />
       </div>
     )
   }
@@ -68,6 +64,7 @@ export function MovieDetailPage() {
           movie={movie} 
           isSelected={isSelected} 
           onWatchlistToggle={handleWatchlistToggle} 
+          onPlayTrailer={movie.videos?.results?.some(v => v.type === "Trailer") ? handlePlayTrailer : undefined}
         />
         
         {/* Detail Sections */}

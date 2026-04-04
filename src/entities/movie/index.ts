@@ -1,4 +1,5 @@
 export * from "./model/types"
+export * from "./model/genreStore"
 export * from "./lib/formatters"
 export * from "./ui/MovieCard"
 export * from "./ui/MovieCardSkeleton"

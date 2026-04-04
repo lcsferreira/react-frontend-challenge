@@ -1,7 +1,8 @@
+import { useState } from "react"
 import type { Movie } from "@/entities/movie"
 import { TMDB_IMAGE_BASE_URL } from "@/shared/lib/constants"
 import { formatRating, formatDate, formatGenres } from "@/entities/movie/lib/formatters"
-import { Star, Calendar, Bookmark, BookmarkCheck, Play } from "lucide-react"
+import { Star, Calendar, Bookmark, BookmarkCheck, Play, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/shared/ui/button"
 import { cn } from "@/shared/lib/utils"
 
@@ -9,9 +10,11 @@ interface MovieHeroProps {
   movie: Movie
   isSelected?: boolean
   onWatchlistToggle?: () => void
+  onPlayTrailer?: () => void
 }
 
-export const MovieHero = ({ movie, isSelected, onWatchlistToggle }: MovieHeroProps) => {
+export const MovieHero = ({ movie, isSelected, onWatchlistToggle, onPlayTrailer }: MovieHeroProps) => {
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const isRecentRelease = () => {
     if (!movie.release_date) return false
@@ -78,14 +81,40 @@ export const MovieHero = ({ movie, isSelected, onWatchlistToggle }: MovieHeroPro
             </p>
           </div>
 
-          <p className="text-lg leading-relaxed text-muted-foreground line-clamp-4 italic max-w-xl">
-            {movie.overview || "Sem sinopse disponível."}
-          </p>
+          <div className="space-y-4">
+            <p className={cn(
+                "text-lg leading-relaxed text-muted-foreground italic max-w-xl transition-all duration-500",
+                !isExpanded && movie.overview && movie.overview.length > 280 && "line-clamp-4"
+            )}>
+              {movie.overview || "Sem sinopse disponível."}
+            </p>
+            
+            {movie.overview && movie.overview.length > 280 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="h-8 px-2 text-primary hover:bg-primary/5 font-bold uppercase tracking-widest text-[10px] gap-2"
+              >
+                {isExpanded ? (
+                  <>Ver Menos <ChevronUp className="h-3 w-3" /></>
+                ) : (
+                  <>Ver Mais <ChevronDown className="h-3 w-3" /></>
+                )}
+              </Button>
+            )}
+          </div>
 
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-            <Button size="lg" className="h-14 px-8 rounded-full font-bold gap-2 text-lg shadow-lg shadow-primary/20">
-              <Play className="h-5 w-5 fill-current" /> Assistir Trailer
-            </Button>
+            {onPlayTrailer && (
+              <Button 
+                size="lg" 
+                onClick={onPlayTrailer}
+                className="h-14 px-8 rounded-full font-bold gap-2 text-lg shadow-lg shadow-primary/20"
+              >
+                <Play className="h-5 w-5 fill-current" /> Assistir Trailer
+              </Button>
+            )}
             <Button 
                 variant="outline" 
                 size="lg" 

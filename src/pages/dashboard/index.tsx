@@ -1,19 +1,23 @@
-import { useState } from "react"
-import { useMovies, MovieGrid, DiscoveryFilters } from "@/features/discovery"
+import { useEffect } from "react"
+import { useMovies, MovieGrid, DiscoveryFilters, useDiscoveryStore, useGenres } from "@/features/discovery"
+import { useGenreStore } from "@/entities/movie"
 import { useDebounce } from "@/shared/hooks/useDebounce"
 import { Pagination } from "@/shared/ui/pagination"
 import { useRouter } from "@tanstack/react-router"
-import { Compass, TrendingUp, Search as SearchIcon } from "lucide-react"
+import { Compass, TrendingUp, Search as SearchIcon, FilterX } from "lucide-react"
+import { Button } from "@/shared/ui/button"
 
 export function DashboardPage() {
   const { navigate } = useRouter()
-  const [page, setPage] = useState(1)
-  const [filters, setFilters] = useState({
-    query: "",
-    genre: "",
-    year: "",
-    minRating: 0,
-  })
+  const { page, filters, setPage, setFilters, resetDiscovery } = useDiscoveryStore()
+  const { data: genresData = [] } = useGenres()
+  const setGenres = useGenreStore((s) => s.setGenres)
+
+  useEffect(() => {
+    if (genresData.length > 0) {
+      setGenres(genresData)
+    }
+  }, [genresData, setGenres])
 
   // Debounce search query to avoid excessive API calls
   const debouncedQuery = useDebounce(filters.query, 500)
@@ -25,13 +29,11 @@ export function DashboardPage() {
   })
 
   const handleFilterChange = (newFilters: Partial<typeof filters>) => {
-    setFilters((prev) => ({ ...prev, ...newFilters }))
-    setPage(1) // Reset to first page on filter change
+    setFilters(newFilters)
   }
 
   const handleClearFilters = () => {
-    setFilters({ query: "", genre: "", year: "", minRating: 0 })
-    setPage(1)
+    resetDiscovery()
   }
 
   const handleMovieClick = (id: number) => {
@@ -40,6 +42,21 @@ export function DashboardPage() {
 
   const isSearching = debouncedQuery.length > 0
   const hasFilters = filters.genre || filters.year || filters.minRating > 0
+
+  const getActiveFilterLabel = () => {
+    if (isSearching) return "BUSCANDO"
+    if (!hasFilters) return "EM ALTA HOJE"
+    
+    const parts = []
+    if (filters.genre) {
+      const genreName = genresData.find(g => g.id.toString() === filters.genre)?.name
+      if (genreName) parts.push(genreName)
+    }
+    if (filters.year) parts.push(filters.year)
+    if (filters.minRating > 0) parts.push(`★ ${filters.minRating}+`)
+    
+    return parts.join(" • ").toUpperCase()
+  }
 
   return (
     <div className="container flex flex-col gap-8 py-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
@@ -58,12 +75,21 @@ export function DashboardPage() {
             </p>
           </div>
           
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 backdrop-blur-md border border-muted/20 text-xs font-bold text-secondary-foreground shadow-sm">
-             {isSearching ? (
-                <><SearchIcon className="h-3 w-3" /> BUSCANDO</>
-             ) : (
-                <><TrendingUp className="h-3 w-3 text-red-500" /> EM ALTA HOJE</>
-             )}
+          <div className="flex items-center gap-3">
+            { (hasFilters || isSearching) && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleClearFilters}
+                className="rounded-full h-10 px-4 gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all font-bold uppercase tracking-wider text-[10px]"
+              >
+                <FilterX className="h-3 w-3" /> Limpar Filtros
+              </Button>
+            )}
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 backdrop-blur-md border border-muted/20 text-xs font-bold text-secondary-foreground shadow-sm animate-in slide-in-from-right-4">
+               {isSearching ? <SearchIcon className="h-3 w-3" /> : <TrendingUp className="h-3 w-3 text-red-500" />}
+               {getActiveFilterLabel()}
+            </div>
           </div>
         </div>
       </header>
@@ -71,7 +97,6 @@ export function DashboardPage() {
       <DiscoveryFilters 
         filters={filters} 
         onFilterChange={handleFilterChange} 
-        onClear={handleClearFilters}
       />
 
       <section className="flex flex-col gap-10">

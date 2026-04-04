@@ -2,6 +2,8 @@ import { MovieCard, MovieCardSkeleton } from "@/entities/movie"
 import type { Movie } from "@/entities/movie"
 import { cn } from "@/shared/lib/utils"
 
+import { EmptyState } from "@/shared/ui/feedback-states"
+
 interface MovieGridProps {
   movies: Movie[] | undefined
   isLoading: boolean
@@ -32,9 +34,12 @@ export const MovieGrid = ({
 
   if (!movies || movies.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <h3 className="text-xl font-semibold">Nenhum filme encontrado</h3>
-        <p className="text-muted-foreground">Tente ajustar seus filtros ou busca.</p>
+      <div className="flex justify-center w-full py-10">
+        <EmptyState 
+           title="Nenhum filme encontrado" 
+           description="Tente ajustar seus filtros ou mudar os termos da busca."
+           className="w-full"
+        />
       </div>
     )
   }

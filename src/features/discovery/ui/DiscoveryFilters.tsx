@@ -2,8 +2,7 @@ import { Input } from "@/shared/ui/input"
 import { Select } from "@/shared/ui/select"
 import { Label } from "@/shared/ui/label"
 import { useGenres } from "../hooks/useGenres"
-import { Search, FilterX } from "lucide-react"
-import { Button } from "@/shared/ui/button"
+import { Search } from "lucide-react"
 
 export interface SearchFilters {
   query: string
@@ -15,13 +14,11 @@ export interface SearchFilters {
 interface DiscoveryFiltersProps {
   filters: SearchFilters
   onFilterChange: (filters: Partial<SearchFilters>) => void
-  onClear: () => void
 }
 
 export const DiscoveryFilters = ({
   filters,
   onFilterChange,
-  onClear,
 }: DiscoveryFiltersProps) => {
   const { data: genres = [], isLoading: isLoadingGenres } = useGenres()
 
@@ -91,19 +88,11 @@ export const DiscoveryFilters = ({
                 min="0"
                 max="10"
                 step="0.5"
-                value={filters.minRating}
-                onChange={(e) => onFilterChange({ minRating: Number(e.target.value) })}
+                value={filters.minRating || ""}
+                onChange={(e) => onFilterChange({ minRating: e.target.value === "" ? 0 : Number(e.target.value) })}
+                onFocus={(e) => e.target.select()}
                 className="h-11 bg-background/50 focus:bg-background transition-all"
               />
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={onClear} 
-                className="h-11 w-11 flex-shrink-0 hover:bg-destructive/10 hover:text-destructive group transition-all"
-                title="Limpar filtros"
-              >
-                <FilterX className="h-5 w-5 opacity-70 group-hover:opacity-100" />
-              </Button>
           </div>
         </div>
       </div>

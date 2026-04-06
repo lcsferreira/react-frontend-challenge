@@ -3,7 +3,6 @@ import { Skeleton } from "@/shared/ui/skeleton"
 export const MovieDetailSkeleton = () => {
   return (
     <div className="container flex flex-col gap-12 py-8 animate-pulse">
-      {/* Hero Skeleton */}
       <div className="relative min-h-[500px] w-full rounded-[2rem] bg-muted/20 border border-muted/10 overflow-hidden p-12">
         <div className="flex flex-col md:flex-row gap-8 items-end h-full">
            <Skeleton className="w-[280px] aspect-[2/3] rounded-2xl flex-shrink-0" />
@@ -26,7 +25,6 @@ export const MovieDetailSkeleton = () => {
         </div>
       </div>
 
-      {/* Cast Skeleton */}
       <div className="space-y-6">
         <Skeleton className="h-8 w-64 rounded-full" />
         <div className="flex gap-4 overflow-x-auto pb-4">
@@ -40,7 +38,6 @@ export const MovieDetailSkeleton = () => {
         </div>
       </div>
 
-      {/* Video Skeleton */}
       <div className="space-y-6">
         <Skeleton className="h-8 w-64 rounded-full" />
         <Skeleton className="aspect-video w-full rounded-[2.5rem]" />

@@ -55,7 +55,6 @@ export const Header = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Theme Toggle */}
           <Button
             variant="ghost"
             size="icon"
@@ -70,7 +69,6 @@ export const Header = () => {
             )}
           </Button>
 
-          {/* User Profile */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 

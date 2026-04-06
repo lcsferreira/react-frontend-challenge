@@ -25,8 +25,7 @@ export const MovieVideos = ({ videos }: MovieVideosProps) => {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         ></iframe>
-        
-        {/* Subtle decorative elements */}
+
         <div className="absolute top-4 right-4 z-10 flex items-center gap-2 p-2 rounded-full bg-secondary/80 backdrop-blur-md border border-secondary/50 text-[10px] font-black uppercase tracking-widest text-secondary-foreground shadow-lg pointer-events-none">
            <Youtube className="h-3 w-3 text-red-500 fill-red-500" />
            YouTube Official

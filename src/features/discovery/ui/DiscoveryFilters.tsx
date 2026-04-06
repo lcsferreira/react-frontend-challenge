@@ -25,7 +25,6 @@ export const DiscoveryFilters = ({
   return (
     <div className="flex flex-col gap-6 p-6 rounded-xl bg-card/40 backdrop-blur-md border border-muted/20 shadow-sm transition-all hover:bg-card/60">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
-        {/* Search */}
         <div className="space-y-2.5">
           <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground opacity-80 pl-0.5">
             Busca de filmes
@@ -41,7 +40,6 @@ export const DiscoveryFilters = ({
           </div>
         </div>
 
-        {/* Gênero */}
         <div className="space-y-2.5">
           <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground opacity-80 pl-0.5">
             Gênero
@@ -61,7 +59,6 @@ export const DiscoveryFilters = ({
           </Select>
         </div>
 
-        {/* Ano */}
         <div className="space-y-2.5">
           <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground opacity-80 pl-0.5">
             Ano de lançamento
@@ -77,7 +74,6 @@ export const DiscoveryFilters = ({
           />
         </div>
 
-        {/* Nota Mínima */}
         <div className="space-y-2.5">
           <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground opacity-80 pl-0.5">
             Nota Mínima (0-10)

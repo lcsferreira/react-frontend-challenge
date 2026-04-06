@@ -19,7 +19,6 @@ export function DashboardPage() {
     }
   }, [genresData, setGenres])
 
-  // Debounce search query to avoid excessive API calls
   const debouncedQuery = useDebounce(filters.query, 500)
 
   const { data, isLoading } = useMovies({

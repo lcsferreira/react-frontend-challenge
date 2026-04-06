@@ -67,7 +67,6 @@ export function MovieDetailPage() {
           onPlayTrailer={movie.videos?.results?.some(v => v.type === "Trailer") ? handlePlayTrailer : undefined}
         />
         
-        {/* Detail Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-8 flex flex-col gap-16">
             {movie.credits && <MovieCast cast={movie.credits.cast} />}
@@ -75,7 +74,6 @@ export function MovieDetailPage() {
           </div>
           
           <div className="lg:col-span-4 flex flex-col gap-8">
-             {/* We could add extra info like stats here if needed */}
              <div className="p-8 rounded-[2rem] bg-card/40 backdrop-blur-md border border-muted/20 space-y-6 shadow-sm">
                 <h3 className="text-xl font-black uppercase tracking-tight text-primary">Informações Extras</h3>
                 <div className="space-y-4">
@@ -91,7 +89,6 @@ export function MovieDetailPage() {
                         <span className="text-muted-foreground font-medium">Votos</span>
                         <span className="font-bold">{movie.vote_count.toLocaleString()}</span>
                     </div>
-                    {/* Add more stats if available in TMDB Detailed response */}
                 </div>
              </div>
           </div>
